@@ -1,0 +1,44 @@
+---
+- name: Provision Image Dinivas Jenkins Slave to build
+  hosts: packer-jenkins-slave
+  become: true
+  vars:
+    docker_users:
+      - centos
+  pre_tasks:
+    - name: Get installed pip version
+      command: "pip --version"
+      register: pip_version_output
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Download get-pip.py
+      get_url:
+          url: 'https://bootstrap.pypa.io/get-pip.py'
+          dest: /tmp/get-pip.py
+      when: (pip_version_output is failed)
+
+    # Install pip if it's not already installed, or if
+    # the desired versions of pip aren't installed
+    # The regular expression extracts '9.0' out of '9.0.*'
+    - name: Install pip
+      command: "{{ ansible_python_interpreter if ansible_python_interpreter is defined else 'python' }} get-pip.py"
+      when: "(pip_version_output is failed)"
+      args:
+        chdir: /tmp
+  roles:
+    - geerlingguy.docker
+    - geerlingguy.java
+    - gantsign.maven
+    - geerlingguy.repo-epel
+    - geerlingguy.ansible
+  # tasks:
+  #   - name: install Python packages
+  #     pip:
+  #       name: "{{ item }}"
+  #       state: present
+  #     with_items:
+  #       - molecule
+  #       - tox
+  #       - docker
+  #       - pipenv

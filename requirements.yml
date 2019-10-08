@@ -1,0 +1,7 @@
+---
+
+- src: geerlingguy.docker
+- src: geerlingguy.java
+- src: gantsign.maven
+- src: geerlingguy.repo-epel
+- src: geerlingguy.ansible

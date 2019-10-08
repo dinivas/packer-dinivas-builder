@@ -1,1 +1,1 @@
-# packer-jenkins-slave
+# packer-dinivas-builder
